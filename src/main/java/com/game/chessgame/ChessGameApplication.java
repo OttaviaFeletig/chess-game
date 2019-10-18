@@ -1,5 +1,9 @@
 package com.game.chessgame;
 
+import com.game.chessgame.Board.Board;
+import com.game.chessgame.Board.BoardRepository;
+import com.game.chessgame.Cell.Cell;
+import com.game.chessgame.Cell.CellRepository;
 import com.game.chessgame.Game.Game;
 import com.game.chessgame.Game.GameRepository;
 import com.game.chessgame.GamePlayer.GamePlayer;
@@ -11,6 +15,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import java.util.List;
+
 @SpringBootApplication
 public class ChessGameApplication {
 
@@ -19,7 +25,7 @@ public class ChessGameApplication {
 	}
 
 	@Bean
-	public CommandLineRunner initData(PlayerRepository playerRepo, GameRepository gameRepo, GamePlayerRepository gamePlayerRepo) {
+	public CommandLineRunner initData(PlayerRepository playerRepo, GameRepository gameRepo, GamePlayerRepository gamePlayerRepo, BoardRepository boardRepo, CellRepository cellRepo) {
 		return (args) -> {
 			// save a couple of customers
 			Player player1 = new Player("Jack", "24");
@@ -31,12 +37,27 @@ public class ChessGameApplication {
 			GamePlayer gamePlayer2 = new GamePlayer();
 
 			gamePlayer1.setPlayer(player1);
-			gamePlayer1.setGame(game1);
 			gamePlayer2.setPlayer(player2);
-			gamePlayer2.setGame(game1);
+			game1.addGamePlayer(gamePlayer1);
+			game1.addGamePlayer(gamePlayer2);
+			Board board1 = new Board();
 
+			String[] cellLetters = {"A", "B", "C", "D", "E", "F", "G", "H"};
+			String[] cellNumbers = {"1", "2", "3", "4", "5", "6", "7", "8"};
+			boardRepo.save(board1);
+
+			for (int i = 0; i < cellLetters.length; i++){
+				for(int g = 0; g < cellNumbers.length; g++){
+					Cell cell = new Cell(cellLetters[i], cellNumbers[g]);
+					board1.addCell(cell);
+					cellRepo.save(cell);
+				}
+			}
+			game1.setBoard(board1);
 			playerRepo.save(player1);
 			playerRepo.save(player2);
+
+//			boardRepo.save(board1);
 
 			gameRepo.save(game1);
 

@@ -1,5 +1,6 @@
 package com.game.chessgame.Game;
 
+import com.game.chessgame.Board.Board;
 import com.game.chessgame.GamePlayer.GamePlayer;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -10,12 +11,18 @@ import java.util.Set;
 @Entity
 public class Game {
     @Id
+
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
     private long id;
 
     @OneToMany(mappedBy = "game", fetch = FetchType.EAGER)
     private Set<GamePlayer> gamePlayers = new HashSet<>();
+
+
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "board_id")
+    private Board board;
 
     public Game(){}
 
@@ -36,5 +43,13 @@ public class Game {
 
     public void setGamePlayers(Set<GamePlayer> gamePlayers) {
         this.gamePlayers = gamePlayers;
+    }
+
+    public Board getBoard() {
+        return board;
+    }
+
+    public void setBoard(Board board) {
+        this.board = board;
     }
 }
